@@ -1,15 +1,15 @@
 env:
-  name: ParamAcrobot
+  name: ParamLunarLander
 
-num_episodes: 1500
+num_episodes: 5000
 batch_size: 10
 
 algo: REINFORCE
 model_params:
-  hidden_sizes: [32, 32]
+  hidden_sizes: [128, 64]
   init_log_std: 0.7
   learning_rate: 3e-4
   discr: True
-  in_dim: 6
-  out_dim: 3
+  in_dim: 8
+  out_dim: 4
 

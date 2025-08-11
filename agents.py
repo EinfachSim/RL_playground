@@ -10,7 +10,7 @@ class MLPAgent(nn.Module):
         last_size = self.in_dim
         for size in hidden_sizes:
             layers.append(nn.Linear(last_size, size))
-            layers.append(nn.ReLU())
+            layers.append(nn.Tanh())
             last_size = size
         self.shared_net = nn.Sequential(*layers)
 
@@ -32,5 +32,6 @@ class MLPAgent(nn.Module):
         else:
             mu = self.mu_head(x)
             std = torch.exp(self.log_std)
+            #std = torch.clamp(std, min=1e-3, max=1.0)
             return mu, std
         

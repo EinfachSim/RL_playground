@@ -6,6 +6,22 @@ class ParamAcrobot(gym.Wrapper):
         env = gym.make("Acrobot-v1", render_mode=render)
         super().__init__(env)
 
+class ParamMountainCarCont(gym.Wrapper):
+    def __init__(self, render=None):
+        env = gym.make("MountainCarContinuous-v0", render_mode=render)
+        super().__init__(env)
+
+class ParamBipedalWalker(gym.Wrapper):
+    def __init__(self, render=None):
+        env = gym.make("BipedalWalker-v3", hardcore=False, render_mode=render)
+        super().__init__(env)
+
+class ParamLunarLander(gym.Wrapper):
+    def __init__(self, render=None):
+        env = gym.make("LunarLander-v3", render_mode=render)
+        super().__init__(env)
+
+
 
 
 class ParamCartPole(gym.Wrapper):

@@ -45,7 +45,7 @@ for e in range(num_episodes):
     batches.append(trajectory)
     batches = batches[-batch_size:]
     if e % batch_size == 0:
-        agent.update(batches[-batch_size:])
+        agent.update(batches)
 
     rewards.append(total_reward)
 

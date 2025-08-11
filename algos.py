@@ -21,15 +21,16 @@ class REINFORCE:
                 returns.insert(0, G_t)
                 log_probs.insert(0, log_prob)
         
-        returns = torch.tensor(returns, dtype=torch.float32)
+        returns = torch.tensor(returns)
         returns = (returns - returns.mean()) / (returns.std() + 1e-9)
 
         log_probs = torch.stack(log_probs)
         
-        loss = -torch.sum(log_probs * returns)
+        loss = -torch.mean(log_probs * returns)
 
         self.pol.optimizer.zero_grad()
         loss.backward()
+        #torch.nn.utils.clip_grad_norm_(self.pol.parameters(), max_norm=0.5)
         self.pol.optimizer.step()
 
     def sample_action(self, obs):
@@ -42,7 +43,7 @@ class REINFORCE:
             dist = torch.distributions.Categorical(out)
             action = dist.sample()
             log_prob = dist.log_prob(action).sum(axis=-1)
-            return (action.cpu().numpy(), log_prob)
+            return (action.detach().numpy(), log_prob)
 
         else:
             mu = out[0]
@@ -51,9 +52,10 @@ class REINFORCE:
                 return mu.detach().numpy()
             else:
                 dist = torch.distributions.Normal(mu, std)
-                action = dist.sample()                # stochastic during training
+                action = dist.rsample()                # stochastic during training
                 log_prob = dist.log_prob(action).sum(axis=-1)  # sum over action dims
-                return action.cpu().numpy(), log_prob.cpu()
+
+                return action.detach().numpy(), log_prob.cpu()
 
         
 
