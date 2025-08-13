@@ -20,7 +20,9 @@ def train_from_config(config_file):
 
     logger = HTTPLogger()
 
-    for e in range(num_episodes):
+    train_episode = 1
+
+    for e in range(num_episodes*batch_size):
 
         obs, _ = env.reset()
 
@@ -41,16 +43,6 @@ def train_from_config(config_file):
             total_reward += reward
 
             done = terminated or truncated
-    
-        ### LOGGING
-        log_data = {
-            "episode": e,
-            "reward": total_reward
-        }
-        logger.log_episode_metrics(log_data)
-        ####
-
-        print(f"EPISODE: {e}, REWARD: {total_reward}")
 
         if total_reward > best:
             best_policy = copy.deepcopy(agent.pol)
@@ -59,9 +51,18 @@ def train_from_config(config_file):
         batches.append(trajectory)
         batches = batches[-batch_size:]
         if e % batch_size == 0:
+            print(f"EPISODE: {train_episode}, REWARD: {total_reward}")
+            ### LOGGING
+            log_data = {
+                "episode": train_episode,
+                "reward": total_reward
+            }
+            logger.log_episode_metrics(log_data)
+            ####
             agent.update(batches)
+            train_episode += 1
 
-        rewards.append(total_reward)
+            rewards.append(total_reward)
 
     env.close()
 
