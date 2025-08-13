@@ -48,21 +48,22 @@ def train_from_config(config_file):
             best_policy = copy.deepcopy(agent.pol)
             best = total_reward
 
+        rewards.append(total_reward)
         batches.append(trajectory)
         batches = batches[-batch_size:]
         if e % batch_size == 0:
-            print(f"EPISODE: {train_episode}, REWARD: {total_reward}")
+            avg_reward = sum(rewards[-batch_size:])/batch_size
+            print(f"EPISODE: {train_episode}, REWARD: {avg_reward}")
             ### LOGGING
             log_data = {
                 "episode": train_episode,
-                "reward": total_reward
+                "reward": avg_reward
             }
             logger.log_episode_metrics(log_data)
             ####
             agent.update(batches)
             train_episode += 1
 
-            rewards.append(total_reward)
 
     env.close()
 

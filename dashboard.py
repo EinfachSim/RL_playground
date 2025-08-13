@@ -45,7 +45,7 @@ def update_graph(n):
     fig.update_layout(
         xaxis_title='Episode',
         yaxis_title='Reward',
-        title='Reward per Episode'
+        title='Average Rewards per Episode of training'
     )
     return fig
 
