@@ -1,6 +1,6 @@
 import copy
+import wandb
 from utils import load_session
-from logger import HTTPLogger
 import pickle
 
 
@@ -18,7 +18,7 @@ def train_from_config(config_file):
     best = -float("Inf")
     best_policy = None
 
-    logger = HTTPLogger()
+    wandb.init(project="RL_playground", config=config)
 
     train_episode = 1
 
@@ -55,17 +55,14 @@ def train_from_config(config_file):
             avg_reward = sum(rewards[-batch_size:])/batch_size
             print(f"EPISODE: {train_episode}, REWARD: {avg_reward}")
             ### LOGGING
-            log_data = {
-                "episode": train_episode,
-                "reward": avg_reward
-            }
-            logger.log_episode_metrics(log_data)
+            wandb.log({"reward": avg_reward, "best_reward": best}, step=train_episode)
             ####
             agent.update(batches)
             train_episode += 1
 
 
     env.close()
+    wandb.finish()
 
     #save best agent
 
