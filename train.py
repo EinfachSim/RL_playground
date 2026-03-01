@@ -50,14 +50,14 @@ def train_from_config(config_file):
 
         rewards.append(total_reward)
         batches.append(trajectory)
-        batches = batches[-batch_size:]
-        if e % batch_size == 0:
+        if len(batches) == batch_size:
             avg_reward = sum(rewards[-batch_size:])/batch_size
             print(f"EPISODE: {train_episode}, REWARD: {avg_reward}")
             ### LOGGING
             wandb.log({"reward": avg_reward, "best_reward": best}, step=train_episode)
             ####
             agent.update(batches)
+            batches = []
             train_episode += 1
 
 
