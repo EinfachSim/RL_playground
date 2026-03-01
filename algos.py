@@ -136,11 +136,6 @@ class PPO:
         ret_t      = torch.tensor(ret_list,    dtype=torch.float32)
         logp_old_t = torch.stack(logp_old_list).detach()
 
-        with torch.no_grad():
-            sample_vals = self.pol.value(obs_t[:5]).squeeze()
-            print(f"predicted values: {sample_vals.numpy()}")
-            print(f"actual returns:   {ret_t[:5].numpy()}")
-
         # Normalise advantages (same spirit as REINFORCE's return normalisation)
         adv_t = (adv_t - adv_t.mean()) / (adv_t.std() + 1e-8)
 

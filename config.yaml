@@ -1,15 +1,15 @@
 env:
-  name: ParamCartPole
+  name: ParamBipedalWalker
 
-num_episodes: 1000
-batch_size: 20
+num_episodes: 10000
+batch_size: 32
 
 algo: PPO
 model_params:
-  hidden_sizes: [128, 32]
-  init_log_std: 0.7
+  hidden_sizes: [256, 256]
+  init_log_std: 0.0
   learning_rate: 3e-4
-  discr: True
-  in_dim: 4
-  out_dim: 2
+  discr: False
+  in_dim: 24
+  out_dim: 4
 

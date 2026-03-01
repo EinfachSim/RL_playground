@@ -6,7 +6,6 @@ class MLPAgent(nn.Module):
         super().__init__()
         
         self.in_dim = in_dim
-        layers = []
         last_size = hidden_sizes[-1]
         self.shared_net = self._build_trunk(in_dim, hidden_sizes)
         self.value_net = self._build_trunk(in_dim, hidden_sizes)
@@ -18,16 +17,24 @@ class MLPAgent(nn.Module):
             nn.init.orthogonal_(self.out_head.weight, gain=0.01)
         else:
             self.mu_head = nn.Linear(last_size, out_dim)
+            nn.init.orthogonal_(self.mu_head.weight, gain=0.01)
+            nn.init.constant_(self.mu_head.bias, 0.0)
             self.log_std = nn.Parameter(torch.ones(out_dim) * init_log_std)
 
         self.value_head = nn.Linear(last_size, 1)
 
         nn.init.orthogonal_(self.value_head.weight, gain=1.0)
         nn.init.constant_(self.value_head.bias, 0.0)
+
+        pi_params = list(self.shared_net.parameters())
+        if self.discr:
+            pi_params += list(self.out_head.parameters())
+        else:
+            pi_params += list(self.mu_head.parameters()) + [self.log_std]
+        
         learning_rate = float(learning_rate)
         self.optimizer = torch.optim.Adam([
-                {'params': self.shared_net.parameters(), 'lr': learning_rate},
-                {'params': self.out_head.parameters(), 'lr': learning_rate},
+                {'params': pi_params, 'lr': learning_rate},
                 {'params': self.value_net.parameters(), 'lr': learning_rate * 3},
                 {'params': self.value_head.parameters(), 'lr': learning_rate * 3},
             ],
@@ -55,7 +62,7 @@ class MLPAgent(nn.Module):
         else:
             mu = self.mu_head(x)
             std = torch.exp(self.log_std)
-            #std = torch.clamp(std, min=1e-3, max=1.0)
+            std = torch.clamp(std, min=1e-3, max=1.0)
             return mu, std
     
     def value(self, obs):
