@@ -9,6 +9,7 @@ A clean, modular implementation of Deep Reinforcement Learning algorithms built 
 | Algorithm | Type | Status |
 |-----------|------|--------|
 | REINFORCE | Policy Gradient | ✅ |
+| PPO-clip | Policy Gradient | ✅ |
 
 More algorithms coming soon.
 
